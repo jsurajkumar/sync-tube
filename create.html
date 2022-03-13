@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SyncTube</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Watch YouTube videos together. Create rooms, manage permissions and chat while watching videos synchronized with your friends!">
+    <link rel="icon" type="image/png" href="https://sync-tube.de/img/favicon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/room.css">
+    <script src="js/room.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script async src="https://www.google-analytics.com/analytics.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="header_wrapper">
+        <div class="logo noselect">
+          <a href="index.html" target="_blank">
+            <span>S</span>YNC <img src="img/play.svg">
+            <span>T</span>UBE </a>
+        </div>
+        <div class="roomName noselect"></div>
+        <div class="search_input_wrapper">
+          <input class="searchInput" type="text" placeholder="Enter YouTube URL here">
+          <div class="search_result_wrapper"></div>
+        </div>
+      </div>
+      <nav class="tabs noselect" id="main_nav">
+        <div class="nohide" t="playlist">Playlist <div class="notify">0</div>
+        </div>
+        <div class="nohide" t="chat">Chat <div class="notify">0</div>
+        </div>
+        <div id="btnSettings">Settings</div>
+      </nav>
+      <div class="user_popup">
+        <div class="user_popup_btn">
+          <img src="img/user.png">
+        </div>
+        <div class="user_popup_menu">
+          <div class="user_popup_entry" id="btn_login">Login</div>
+          <a href="/signup" target="_blank">
+            <div class="user_popup_entry">Sign Up</div>
+          </a>
+          <div class="user_popup_spacer"></div>
+          <div class="user_popup_entry" id="btn_settings">Settings</div>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div class="left_wrapper">
+        <div class="center">
+          <div class="player">
+            <div class="view">
+              <div id="player"></div>
+              <div class="novideo visible">NO VIDEO</div>
+            </div>
+          </div>
+          <div class="info">
+            <div class="btnSkip">Skip Video</div>
+            <div class="videoTitle"></div>
+            <div class="videoDescription"></div>
+            <div class="readMore noselect">Show more</div>
+          </div>
+        </div>
+      </div>
+      <aside>
+        <div class="wrapper">
+          <div class="content">
+            <div class="wrapper">
+              <div class="playlist">
+                <ul id="video_list"></ul>
+                <div class="noplaylist noselect visible">No upcoming Videos</div>
+                <div class="edge"></div>
+              </div>
+              <div class="chat tab_visible">
+                <div class="log" id="chat_log"></div>
+                <div class="input">
+                  <input type="text" spellcheck="false" id="chat_input">
+                  <div class="btn" id="btn_chat_emotes">
+                    <img src="img/emote.png">
+                  </div>
+                </div>
+                <div class="emotes">
+                  <div class="emojiNav tabs">
+                    <div class="emojiBtn" t="defaultEmojis">Emoji</div>
+                    <div class="emojiBtn" t="customEmojis">Other</div>
+                  </div>
+                  <div class="emojiContent">
+                    <div class="defaultEmojis tab_visible"></div>
+                    <ul class="customEmojis"></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="users">
+            <div class="userCount noselect">0 Users</div>
+            <ul id="user_list"></ul>
+          </div>
+        </div>
+      </aside>
+    </main>
+    <div class="overlay">
+      <div class="overlay_background"></div>
+      <div class="settings">
+        <div class="title">Settings</div>
+        <div class="btnClose">
+          <img src="img/crossb.png">
+        </div>
+        <div class="settings_content">
+          <div class="left">
+            <section>
+              <div class="title">User</div>
+              <ul>
+                <li>
+                  <div class="desc">Remember Name</div>
+                  <div class="checkbox" id="cb_rn"></div>
+                </li>
+                <li>
+                  <div class="desc">Your Name</div>
+                  <div class="color_picker"></div>
+                  <input type="text" id="input_userName">
+                </li>
+              </ul>
+            </section>
+            <section>
+              <div class="title">Room</div>
+              <ul class="enabled disabled">
+                <li>
+                  <div class="desc">Public</div>
+                  <div class="checkbox" id="cb_p"></div>
+                </li>
+                <li>
+                  <div class="desc">Room Name</div>
+                  <input type="text" id="input_roomName">
+                </li>
+              </ul>
+            </section>
+          </div>
+          <div class="right">
+            <section>
+              <div class="title">Permissions</div>
+              <table class="enabled disabled" id="table_permissions">
+                <tr>
+                  <th></th>
+                  <th>Guest</th>
+                  <th>Moderator</th>
+                  <th>Owner</th>
+                </tr>
+                <tr pid="add">
+                  <th>Add</th>
+                  <td>
+                    <div class="checkbox" id="0"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="1"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="2"></div>
+                  </td>
+                </tr>
+                <tr pid="rem">
+                  <th>Remove</th>
+                  <td>
+                    <div class="checkbox" id="0"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="1"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="2"></div>
+                  </td>
+                </tr>
+                <tr pid="move">
+                  <th>Move</th>
+                  <td>
+                    <div class="checkbox" id="0"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="1"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="2"></div>
+                  </td>
+                </tr>
+                <tr pid="play">
+                  <th>Play/Pause</th>
+                  <td>
+                    <div class="checkbox" id="0"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="1"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="2"></div>
+                  </td>
+                </tr>
+                <tr pid="seek">
+                  <th>Seek</th>
+                  <td>
+                    <div class="checkbox" id="0"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="1"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="2"></div>
+                  </td>
+                </tr>
+                <tr pid="skip">
+                  <th>Skip</th>
+                  <td>
+                    <div class="checkbox" id="0"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="1"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="2"></div>
+                  </td>
+                </tr>
+                <tr pid="chat">
+                  <th>Use Chat</th>
+                  <td>
+                    <div class="checkbox" id="0"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="1"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="2"></div>
+                  </td>
+                </tr>
+                <tr pid="kick">
+                  <th>Kick</th>
+                  <td>
+                    <div class="checkbox" id="0"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="1"></div>
+                  </td>
+                  <td>
+                    <div class="checkbox" id="2"></div>
+                  </td>
+                </tr>
+              </table>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div class="login_form">
+        <div class="title">Login</div>
+        <div class="label">User</div>
+        <input type="text" name="user">
+        <div class="label">Password <a href="resetpwd" target="_blank">
+            <div class="label_info">Forgot?</div>
+          </a>
+        </div>
+        <input type="passwort" name="pwd">
+        <div class="btn_login">Login</div>
+        <div class="bottom_info">Not a member? <a href="/signup" target="_blank">
+            <div class="label_info">Sign up now</div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <div class="wrapper">
+        <aside>
+          <div>
+            <p>
+              <a href="/" target="_blank">© Sync-Tube.de 2020</a>
+            </p>
+          </div>
+        </aside>
+        <aside>
+          <div>
+            <a href="https://discord.gg/4aEdjj3" target="_blank">
+              <img src="img/discord_white.png">
+            </a>
+            <a href="https://twitter.com/sync_tube" target="_blank">
+              <img src="img/twitter_white.png">
+            </a>
+          </div>
+        </aside>
+        <aside>
+          <div>
+            <p>
+              <a href="contact.html" target="_blank">Contact</a>
+            </p>
+            <p>
+              <a href="tos.html" target="_blank">Terms of Service</a>
+            </p>
+            <p>
+              <a href="privacy.html" target="_blank">Privacy Policy</a>
+            </p>
+          </div>
+        </aside>
+      </div>
+    </footer>
+  </body>
+</html>
